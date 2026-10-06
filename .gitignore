@@ -1,0 +1,16 @@
+# local tooling and the abandoned n8n install
+.claude/
+n8n-runtime/
+workflow/
+
+# old n8n-era docs and diagrams (project now runs on Make.com)
+docs/workflow_diagram.png
+docs/architecture_diagram.png
+docs/make_workflow_diagram.py
+docs/make_architecture_diagram.py
+docs/WORKFLOW_WIRING_GUIDE.md
+docs/SETUP_GUIDE.md
+docs/report_sections.md
+
+# never commit exported scenarios until API keys are removed
+*.blueprint.json
