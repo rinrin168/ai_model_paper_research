@@ -1,0 +1,3273 @@
+{
+  "name": "Integration Telegram Bot, Tools, HTTP",
+  "flow": [
+    {
+      "id": 1,
+      "module": "telegram:WatchUpdates",
+      "version": 1,
+      "parameters": {
+        "__IMTHOOK__": 3695737
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "__IMTHOOK__": {
+              "data": {
+                "editable": "false"
+              },
+              "label": "ai_recearch_paper_bot"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "__IMTHOOK__",
+            "type": "hook:telegramapi",
+            "label": "Webhook",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "module": "util:SetVariables",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "scope": "roundtrip",
+        "variables": [
+          {
+            "name": "chatId",
+            "value": "{{1.message.chat.id}}"
+          },
+          {
+            "name": "researchTopic",
+            "value": "{{1.message.text}}"
+          }
+        ]
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "restore": {
+          "expect": {
+            "scope": {
+              "label": "One cycle"
+            },
+            "variables": {
+              "items": [
+                null,
+                null
+              ]
+            }
+          }
+        },
+        "expect": [
+          {
+            "name": "variables",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "name",
+                  "type": "text",
+                  "label": "Variable name",
+                  "required": true
+                },
+                {
+                  "name": "value",
+                  "type": "any",
+                  "label": "Variable value"
+                }
+              ],
+              "type": "collection",
+              "label": "Variable"
+            },
+            "type": "array",
+            "label": "Variables",
+            "validate": {
+              "unique": {
+                "by": "name"
+              }
+            }
+          },
+          {
+            "name": "scope",
+            "type": "select",
+            "label": "Variable lifetime",
+            "required": true,
+            "validate": {
+              "enum": [
+                "roundtrip",
+                "execution"
+              ]
+            }
+          }
+        ],
+        "interface": [
+          {
+            "name": "chatId",
+            "type": "any",
+            "label": "chatId"
+          },
+          {
+            "name": "researchTopic",
+            "type": "any",
+            "label": "researchTopic"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+        "method": "post",
+        "headers": [
+          {
+            "name": "x-goog-api-key",
+            "value": "YOUR_GEMINI_API_KEY"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "contentType": "json",
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "timeout": "120",
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true,
+        "inputMethod": "dataStructure",
+        "bodyDataStructure": 574522,
+        "dataStructureBodyContent": {
+          "systemInstruction": {
+            "parts": [
+              {
+                "text": "You are a research assistant. Read the user's research topic and respond with ONLY valid JSON, no other text, in this exact shape: {\"search_query\": string, \"key_concepts\": string[]}. The search_query should be an effective web search string for finding academic/quality sources on the topic."
+              }
+            ]
+          },
+          "contents": [
+            {
+              "role": "user",
+              "parts": [
+                {
+                  "text": "{{2.researchTopic}}"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        },
+        "setupValidation": {
+          "version": 1,
+          "configuration": "a24a3bda45887785",
+          "result": {
+            "valid": true,
+            "fields": []
+          }
+        },
+        "restore": {
+          "parameters": {
+            "authenticationType": {
+              "label": "No authenticationUse when no credentials are required for the request."
+            },
+            "tlsType": {
+              "label": "Empty"
+            }
+          },
+          "expect": {
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null,
+                null
+              ]
+            },
+            "queryParameters": {
+              "mode": "chose"
+            },
+            "contentType": {
+              "label": "application/jsonEnter data in the JSON format, as a string or using a data structure."
+            },
+            "parseResponse": {
+              "mode": "chose"
+            },
+            "stopOnHttpError": {
+              "mode": "chose"
+            },
+            "allowRedirects": {
+              "mode": "chose"
+            },
+            "shareCookies": {
+              "mode": "chose"
+            },
+            "requestCompressedContent": {
+              "mode": "chose"
+            },
+            "inputMethod": {
+              "label": "Data structureDefine the JSON body with a data structure to map or enter values for each key. JSON reserved characters are escaped automatically."
+            },
+            "bodyDataStructure": {
+              "label": "My data structure"
+            },
+            "dataStructureBodyContent": {
+              "nested": {
+                "systemInstruction": {
+                  "nested": {
+                    "parts": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "contents": {
+                  "mode": "chose",
+                  "items": [
+                    {
+                      "parts": {
+                        "mode": "chose",
+                        "items": [
+                          null
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "paginationType": {
+              "label": "Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authenticationType",
+            "type": "select",
+            "label": "Authentication type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "noAuth",
+                "apiKey",
+                "basicAuth",
+                "oAuth"
+              ]
+            }
+          },
+          {
+            "name": "tlsType",
+            "type": "select",
+            "label": "Transport layer security (TLS)",
+            "validate": {
+              "enum": [
+                "mTls",
+                "tls"
+              ]
+            }
+          },
+          {
+            "name": "proxyKeychain",
+            "type": "keychain:proxy",
+            "label": "Proxy"
+          }
+        ],
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "get",
+                "head",
+                "post",
+                "put",
+                "patch",
+                "delete",
+                "options"
+              ]
+            }
+          },
+          {
+            "name": "headers",
+            "type": "array",
+            "label": "Headers",
+            "spec": {
+              "name": "value",
+              "label": "Header",
+              "type": "collection",
+              "spec": [
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "type": "text",
+                  "required": true,
+                  "validate": {
+                    "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                  }
+                },
+                {
+                  "name": "value",
+                  "label": "Value",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          {
+            "name": "queryParameters",
+            "type": "array",
+            "label": "Query parameters",
+            "spec": {
+              "name": "value",
+              "label": "Parameter",
+              "type": "collection",
+              "spec": [
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "name": "value",
+                  "label": "Value",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Body content type",
+            "validate": {
+              "enum": [
+                "json",
+                "multipart",
+                "urlEncoded",
+                "custom"
+              ]
+            }
+          },
+          {
+            "name": "parseResponse",
+            "type": "boolean",
+            "label": "Parse response",
+            "required": true
+          },
+          {
+            "name": "stopOnHttpError",
+            "type": "boolean",
+            "label": "Return error if HTTP request fails",
+            "required": true
+          },
+          {
+            "name": "timeout",
+            "type": "uinteger",
+            "label": "Timeout",
+            "validate": {
+              "min": 1,
+              "max": 300
+            }
+          },
+          {
+            "name": "allowRedirects",
+            "type": "boolean",
+            "label": "Allow redirects",
+            "required": true
+          },
+          {
+            "name": "shareCookies",
+            "type": "boolean",
+            "label": "Share cookies with other HTTP modules",
+            "required": true
+          },
+          {
+            "name": "requestCompressedContent",
+            "type": "boolean",
+            "label": "Request compressed content",
+            "required": true
+          },
+          {
+            "name": "inputMethod",
+            "type": "select",
+            "label": "Body input method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "dataStructure",
+                "jsonString"
+              ]
+            }
+          },
+          {
+            "name": "bodyDataStructure",
+            "type": "udt",
+            "label": "Body structure",
+            "required": true
+          },
+          {
+            "name": "dataStructureBodyContent",
+            "type": "collection",
+            "label": "Body content",
+            "spec": [
+              {
+                "name": "systemInstruction",
+                "type": "collection",
+                "label": null,
+                "spec": [
+                  {
+                    "name": "parts",
+                    "type": "array",
+                    "label": null,
+                    "spec": {
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "text",
+                          "label": null,
+                          "type": "text"
+                        }
+                      ],
+                      "name": "value"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "contents",
+                "type": "array",
+                "label": null,
+                "spec": {
+                  "type": "collection",
+                  "spec": [
+                    {
+                      "name": "role",
+                      "label": null,
+                      "type": "text"
+                    },
+                    {
+                      "name": "parts",
+                      "label": null,
+                      "type": "array",
+                      "spec": {
+                        "type": "collection",
+                        "spec": [
+                          {
+                            "name": "text",
+                            "label": null,
+                            "type": "text"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "name": "value"
+                }
+              }
+            ]
+          },
+          {
+            "name": "paginationType",
+            "type": "select",
+            "label": "Pagination type",
+            "validate": {
+              "enum": [
+                "offsetBased",
+                "pageBased",
+                "urlBased",
+                "tokenBased"
+              ]
+            }
+          }
+        ],
+        "interface": [
+          {
+            "name": "data",
+            "label": "Data",
+            "type": "any"
+          },
+          {
+            "name": "statusCode",
+            "label": "Status Code",
+            "type": "number"
+          },
+          {
+            "name": "headers",
+            "label": "Headers",
+            "type": "collection",
+            "spec": [
+              {
+                "name": "content-length",
+                "label": "Content-Length",
+                "type": "text"
+              },
+              {
+                "name": "content-encoding",
+                "label": "Content-Encoding",
+                "type": "text"
+              },
+              {
+                "name": "content-type",
+                "label": "Content-Type",
+                "type": "text"
+              },
+              {
+                "name": "server",
+                "label": "Server",
+                "type": "text"
+              },
+              {
+                "name": "cache-control",
+                "label": "Cache-Control",
+                "type": "text"
+              },
+              {
+                "name": "set-cookie",
+                "label": "Set-Cookie",
+                "type": "array",
+                "spec": {
+                  "type": "text"
+                }
+              }
+            ]
+          }
+        ],
+        "advanced": true
+      }
+    },
+    {
+      "id": 5,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "json": "{{3.data.candidates[].content.parts[].text}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0
+        },
+        "restore": {},
+        "parameters": [
+          {
+            "name": "type",
+            "type": "udt",
+            "label": "Data structure"
+          }
+        ],
+        "expect": [
+          {
+            "name": "json",
+            "type": "text",
+            "label": "JSON string",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "parameters": {
+        "tlsType": "",
+        "authenticationType": "noAuth"
+      },
+      "mapper": {
+        "url": "https://api.tavily.com/search",
+        "method": "post",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer YOUR_TAVILY_API_KEY"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "contentType": "json",
+        "inputMethod": "dataStructure",
+        "shareCookies": false,
+        "parseResponse": true,
+        "allowRedirects": true,
+        "stopOnHttpError": true,
+        "bodyDataStructure": 574511,
+        "dataStructureBodyContent": {
+          "query": "{{5.search_query}}",
+          "max_results": "4",
+          "search_depth": "advanced"
+        },
+        "requestCompressedContent": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 1200,
+          "y": 0
+        },
+        "restore": {
+          "expect": {
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null,
+                null
+              ]
+            },
+            "contentType": {
+              "label": "application/jsonEnter data in the JSON format, as a string or using a data structure."
+            },
+            "inputMethod": {
+              "label": "Data structureDefine the JSON body with a data structure to map or enter values for each key. JSON reserved characters are escaped automatically."
+            },
+            "shareCookies": {
+              "mode": "chose"
+            },
+            "parseResponse": {
+              "mode": "chose"
+            },
+            "allowRedirects": {
+              "mode": "chose"
+            },
+            "paginationType": {
+              "label": "Empty"
+            },
+            "queryParameters": {
+              "mode": "chose"
+            },
+            "stopOnHttpError": {
+              "mode": "chose"
+            },
+            "bodyDataStructure": {
+              "label": "My data structure"
+            },
+            "requestCompressedContent": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "tlsType": {
+              "label": "Empty"
+            },
+            "authenticationType": {
+              "label": "No authenticationUse when no credentials are required for the request."
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authenticationType",
+            "type": "select",
+            "label": "Authentication type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "noAuth",
+                "apiKey",
+                "basicAuth",
+                "oAuth"
+              ]
+            }
+          },
+          {
+            "name": "tlsType",
+            "type": "select",
+            "label": "Transport layer security (TLS)",
+            "validate": {
+              "enum": [
+                "mTls",
+                "tls"
+              ]
+            }
+          },
+          {
+            "name": "proxyKeychain",
+            "type": "keychain:proxy",
+            "label": "Proxy"
+          }
+        ],
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "get",
+                "head",
+                "post",
+                "put",
+                "patch",
+                "delete",
+                "options"
+              ]
+            }
+          },
+          {
+            "name": "headers",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "name",
+                  "type": "text",
+                  "label": "Name",
+                  "required": true,
+                  "validate": {
+                    "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                  }
+                },
+                {
+                  "name": "value",
+                  "type": "text",
+                  "label": "Value"
+                }
+              ],
+              "type": "collection",
+              "label": "Header"
+            },
+            "type": "array",
+            "label": "Headers"
+          },
+          {
+            "name": "queryParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "name",
+                  "type": "text",
+                  "label": "Name",
+                  "required": true
+                },
+                {
+                  "name": "value",
+                  "type": "text",
+                  "label": "Value"
+                }
+              ],
+              "type": "collection",
+              "label": "Parameter"
+            },
+            "type": "array",
+            "label": "Query parameters"
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Body content type",
+            "validate": {
+              "enum": [
+                "json",
+                "multipart",
+                "urlEncoded",
+                "custom"
+              ]
+            }
+          },
+          {
+            "name": "parseResponse",
+            "type": "boolean",
+            "label": "Parse response",
+            "required": true
+          },
+          {
+            "name": "stopOnHttpError",
+            "type": "boolean",
+            "label": "Return error if HTTP request fails",
+            "required": true
+          },
+          {
+            "name": "timeout",
+            "type": "uinteger",
+            "label": "Timeout",
+            "validate": {
+              "max": 300,
+              "min": 1
+            }
+          },
+          {
+            "name": "allowRedirects",
+            "type": "boolean",
+            "label": "Allow redirects",
+            "required": true
+          },
+          {
+            "name": "shareCookies",
+            "type": "boolean",
+            "label": "Share cookies with other HTTP modules",
+            "required": true
+          },
+          {
+            "name": "requestCompressedContent",
+            "type": "boolean",
+            "label": "Request compressed content",
+            "required": true
+          },
+          {
+            "name": "inputMethod",
+            "type": "select",
+            "label": "Body input method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "dataStructure",
+                "jsonString"
+              ]
+            }
+          },
+          {
+            "name": "bodyDataStructure",
+            "type": "udt",
+            "label": "Body structure",
+            "required": true
+          },
+          {
+            "name": "dataStructureBodyContent",
+            "spec": [
+              {
+                "name": "query",
+                "type": "text",
+                "label": null
+              },
+              {
+                "name": "max_results",
+                "type": "number",
+                "label": null
+              },
+              {
+                "name": "search_depth",
+                "type": "text",
+                "label": null
+              }
+            ],
+            "type": "collection",
+            "label": "Body content"
+          },
+          {
+            "name": "paginationType",
+            "type": "select",
+            "label": "Pagination type",
+            "validate": {
+              "enum": [
+                "offsetBased",
+                "pageBased",
+                "urlBased",
+                "tokenBased"
+              ]
+            }
+          }
+        ],
+        "interface": [
+          {
+            "name": "data",
+            "type": "any",
+            "label": "Data"
+          },
+          {
+            "name": "statusCode",
+            "type": "number",
+            "label": "Status Code"
+          },
+          {
+            "name": "headers",
+            "spec": [
+              {
+                "name": "content-length",
+                "type": "text",
+                "label": "Content-Length"
+              },
+              {
+                "name": "content-encoding",
+                "type": "text",
+                "label": "Content-Encoding"
+              },
+              {
+                "name": "content-type",
+                "type": "text",
+                "label": "Content-Type"
+              },
+              {
+                "name": "server",
+                "type": "text",
+                "label": "Server"
+              },
+              {
+                "name": "cache-control",
+                "type": "text",
+                "label": "Cache-Control"
+              },
+              {
+                "name": "set-cookie",
+                "spec": {
+                  "type": "text"
+                },
+                "type": "array",
+                "label": "Set-Cookie"
+              }
+            ],
+            "type": "collection",
+            "label": "Headers"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "parameters": {
+        "authenticationType": "noAuth",
+        "tlsType": ""
+      },
+      "mapper": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+        "method": "post",
+        "headers": [
+          {
+            "name": "x-goog-api-key",
+            "value": "YOUR_GEMINI_API_KEY"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "contentType": "json",
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "timeout": "120",
+        "allowRedirects": true,
+        "shareCookies": false,
+        "requestCompressedContent": true,
+        "inputMethod": "dataStructure",
+        "bodyDataStructure": 574515,
+        "dataStructureBodyContent": {
+          "systemInstruction": {
+            "parts": [
+              {
+                "text": "You evaluate web search results for a research assistant. Given the research topic and a list of search results (title, url, content snippet), score EACH result. Respond with ONLY valid JSON: {\"sources\": [{\"title\": string, \"url\": string, \"topic_match\": \"High\"|\"Medium\"|\"Low\", \"usefulness\": \"High\"|\"Medium\"|\"Low\", \"decision\": \"KEEP\"|\"REJECT\", \"reason\": string}]}. Reject sources that are off-topic, low quality, or duplicate.Do not wrap your response in markdown code fences or backticks. Output raw JSON only, starting with { and ending with }."
+              }
+            ]
+          },
+          "contents": [
+            [
+              {
+                "role": "user",
+                "parts": [
+                  {
+                    "text": "Research topic:{{2.researchTopic}}. Search results:{{6.data}}"
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      },
+      "metadata": {
+        "designer": {
+          "x": 1500,
+          "y": 0
+        },
+        "setupValidation": {
+          "version": 1,
+          "configuration": "76c8f02e905d3fd9",
+          "result": {
+            "valid": true,
+            "fields": []
+          }
+        },
+        "restore": {
+          "parameters": {
+            "authenticationType": {
+              "label": "No authenticationUse when no credentials are required for the request."
+            },
+            "tlsType": {
+              "label": "Empty"
+            }
+          },
+          "expect": {
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null,
+                null
+              ]
+            },
+            "queryParameters": {
+              "mode": "chose"
+            },
+            "contentType": {
+              "label": "application/jsonEnter data in the JSON format, as a string or using a data structure."
+            },
+            "parseResponse": {
+              "mode": "chose"
+            },
+            "stopOnHttpError": {
+              "mode": "chose"
+            },
+            "allowRedirects": {
+              "mode": "chose"
+            },
+            "shareCookies": {
+              "mode": "chose"
+            },
+            "requestCompressedContent": {
+              "mode": "chose"
+            },
+            "inputMethod": {
+              "label": "Data structureDefine the JSON body with a data structure to map or enter values for each key. JSON reserved characters are escaped automatically."
+            },
+            "bodyDataStructure": {
+              "label": "My data structure"
+            },
+            "dataStructureBodyContent": {
+              "nested": {
+                "systemInstruction": {
+                  "nested": {
+                    "parts": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "contents": {
+                  "mode": "chose",
+                  "items": [
+                    {
+                      "value": {
+                        "mode": "chose",
+                        "items": [
+                          {
+                            "parts": {
+                              "mode": "chose",
+                              "items": [
+                                null
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "paginationType": {
+              "label": "Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authenticationType",
+            "type": "select",
+            "label": "Authentication type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "noAuth",
+                "apiKey",
+                "basicAuth",
+                "oAuth"
+              ]
+            }
+          },
+          {
+            "name": "tlsType",
+            "type": "select",
+            "label": "Transport layer security (TLS)",
+            "validate": {
+              "enum": [
+                "mTls",
+                "tls"
+              ]
+            }
+          },
+          {
+            "name": "proxyKeychain",
+            "type": "keychain:proxy",
+            "label": "Proxy"
+          }
+        ],
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "get",
+                "head",
+                "post",
+                "put",
+                "patch",
+                "delete",
+                "options"
+              ]
+            }
+          },
+          {
+            "name": "headers",
+            "type": "array",
+            "label": "Headers",
+            "spec": {
+              "name": "value",
+              "label": "Header",
+              "type": "collection",
+              "spec": [
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "type": "text",
+                  "required": true,
+                  "validate": {
+                    "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                  }
+                },
+                {
+                  "name": "value",
+                  "label": "Value",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          {
+            "name": "queryParameters",
+            "type": "array",
+            "label": "Query parameters",
+            "spec": {
+              "name": "value",
+              "label": "Parameter",
+              "type": "collection",
+              "spec": [
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "name": "value",
+                  "label": "Value",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Body content type",
+            "validate": {
+              "enum": [
+                "json",
+                "multipart",
+                "urlEncoded",
+                "custom"
+              ]
+            }
+          },
+          {
+            "name": "parseResponse",
+            "type": "boolean",
+            "label": "Parse response",
+            "required": true
+          },
+          {
+            "name": "stopOnHttpError",
+            "type": "boolean",
+            "label": "Return error if HTTP request fails",
+            "required": true
+          },
+          {
+            "name": "timeout",
+            "type": "uinteger",
+            "label": "Timeout",
+            "validate": {
+              "min": 1,
+              "max": 300
+            }
+          },
+          {
+            "name": "allowRedirects",
+            "type": "boolean",
+            "label": "Allow redirects",
+            "required": true
+          },
+          {
+            "name": "shareCookies",
+            "type": "boolean",
+            "label": "Share cookies with other HTTP modules",
+            "required": true
+          },
+          {
+            "name": "requestCompressedContent",
+            "type": "boolean",
+            "label": "Request compressed content",
+            "required": true
+          },
+          {
+            "name": "inputMethod",
+            "type": "select",
+            "label": "Body input method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "dataStructure",
+                "jsonString"
+              ]
+            }
+          },
+          {
+            "name": "bodyDataStructure",
+            "type": "udt",
+            "label": "Body structure",
+            "required": true
+          },
+          {
+            "name": "dataStructureBodyContent",
+            "type": "collection",
+            "label": "Body content",
+            "spec": [
+              {
+                "name": "systemInstruction",
+                "type": "collection",
+                "label": null,
+                "spec": [
+                  {
+                    "name": "parts",
+                    "type": "array",
+                    "label": null,
+                    "spec": {
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "text",
+                          "label": null,
+                          "type": "text"
+                        }
+                      ],
+                      "name": "value"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "contents",
+                "type": "array",
+                "label": null,
+                "spec": {
+                  "type": "array",
+                  "spec": {
+                    "type": "collection",
+                    "spec": [
+                      {
+                        "name": "role",
+                        "label": null,
+                        "type": "text"
+                      },
+                      {
+                        "name": "parts",
+                        "label": null,
+                        "type": "array",
+                        "spec": {
+                          "type": "collection",
+                          "spec": [
+                            {
+                              "name": "text",
+                              "label": null,
+                              "type": "text"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "name": "value"
+                }
+              }
+            ]
+          },
+          {
+            "name": "paginationType",
+            "type": "select",
+            "label": "Pagination type",
+            "validate": {
+              "enum": [
+                "offsetBased",
+                "pageBased",
+                "urlBased",
+                "tokenBased"
+              ]
+            }
+          }
+        ],
+        "interface": [
+          {
+            "name": "data",
+            "label": "Data",
+            "type": "any"
+          },
+          {
+            "name": "statusCode",
+            "label": "Status Code",
+            "type": "number"
+          },
+          {
+            "name": "headers",
+            "label": "Headers",
+            "type": "collection",
+            "spec": [
+              {
+                "name": "content-length",
+                "label": "Content-Length",
+                "type": "text"
+              },
+              {
+                "name": "content-encoding",
+                "label": "Content-Encoding",
+                "type": "text"
+              },
+              {
+                "name": "content-type",
+                "label": "Content-Type",
+                "type": "text"
+              },
+              {
+                "name": "server",
+                "label": "Server",
+                "type": "text"
+              },
+              {
+                "name": "cache-control",
+                "label": "Cache-Control",
+                "type": "text"
+              },
+              {
+                "name": "set-cookie",
+                "label": "Set-Cookie",
+                "type": "array",
+                "spec": {
+                  "type": "text"
+                }
+              }
+            ]
+          }
+        ],
+        "advanced": true
+      }
+    },
+    {
+      "id": 10,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": ""
+      },
+      "mapper": {
+        "json": "{{7.data.candidates[].content.parts[].text}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1800,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "type": {
+              "label": "Choose a data structure"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "type",
+            "type": "udt",
+            "label": "Data structure"
+          }
+        ],
+        "expect": [
+          {
+            "name": "json",
+            "type": "text",
+            "label": "JSON string",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "module": "builtin:BasicFeeder",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "array": "{{10.sources}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 2100,
+          "y": 0
+        },
+        "restore": {
+          "expect": {
+            "array": {
+              "mode": "edit"
+            }
+          }
+        },
+        "expect": [
+          {
+            "mode": "edit",
+            "name": "array",
+            "spec": [],
+            "type": "array",
+            "label": "Array"
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "module": "builtin:BasicAggregator",
+      "version": 1,
+      "parameters": {
+        "feeder": 12
+      },
+      "filter": {
+        "name": "Keep only relevant sources",
+        "conditions": [
+          [
+            {
+              "a": "{{12.decision}}",
+              "b": "KEEP",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      },
+      "mapper": {
+        "url": "{{12.url}}",
+        "title": "{{12.title}}",
+        "reason": "{{12.reason}}",
+        "decision": "{{12.decision}}",
+        "usefulness": "{{12.usefulness}}",
+        "topic_match": "{{12.topic_match}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 2400,
+          "y": 0
+        },
+        "restore": {
+          "extra": {
+            "feeder": {
+              "label": "Iterator [12]"
+            },
+            "target": {
+              "label": "Custom"
+            }
+          }
+        },
+        "advanced": true
+      }
+    },
+    {
+      "id": 18,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 2700,
+          "y": 0
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 19,
+              "module": "http:MakeRequest",
+              "version": 4,
+              "parameters": {
+                "authenticationType": "noAuth",
+                "tlsType": ""
+              },
+              "filter": {
+                "name": "Enough sources",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(17.array)}}",
+                      "b": "3",
+                      "o": "number:greaterorequal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "x-goog-api-key",
+                    "value": "YOUR_GEMINI_API_KEY"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "contentType": "json",
+                "parseResponse": true,
+                "stopOnHttpError": true,
+                "timeout": "120",
+                "allowRedirects": true,
+                "shareCookies": false,
+                "requestCompressedContent": true,
+                "inputMethod": "dataStructure",
+                "bodyDataStructure": 584522,
+                "dataStructureBodyContent": {
+                  "systemInstruction": {
+                    "parts": {
+                      "text": "You are a research assistant. Using the research topic provided, write a short introduction (2-3 sentences) formatted using ONLY these Telegram-supported HTML tags: <b> and <i>. Structure it as: <b>Recommended research topic</b> then a one-line refined research angle in quotes, then a short explanation of why this angle works well. Do not list or describe individual sources — that will be added separately. Keep this under 500 characters. Never use markdown symbols like ** or #. Always close every HTML tag you open. Do not wrap your response in markdown code fences or backticks."
+                    }
+                  },
+                  "contents": [
+                    {
+                      "role": "user",
+                      "parts": [
+                        {
+                          "text": "Research topic: {{2.researchTopic}}. Titles: {{17.array[].title}} URLs:{{17.array[].url}}Reason:{{17.array[].reason}}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3000,
+                  "y": -150
+                },
+                "setupValidation": {
+                  "version": 1,
+                  "configuration": "e02b77863b94b68e",
+                  "result": {
+                    "valid": true,
+                    "fields": []
+                  }
+                },
+                "restore": {
+                  "parameters": {
+                    "authenticationType": {
+                      "label": "No authenticationUse when no credentials are required for the request."
+                    },
+                    "tlsType": {
+                      "label": "Empty"
+                    }
+                  },
+                  "expect": {
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    },
+                    "queryParameters": {
+                      "mode": "chose"
+                    },
+                    "contentType": {
+                      "label": "application/jsonEnter data in the JSON format, as a string or using a data structure."
+                    },
+                    "parseResponse": {
+                      "mode": "chose"
+                    },
+                    "stopOnHttpError": {
+                      "mode": "chose"
+                    },
+                    "allowRedirects": {
+                      "mode": "chose"
+                    },
+                    "shareCookies": {
+                      "mode": "chose"
+                    },
+                    "requestCompressedContent": {
+                      "mode": "chose"
+                    },
+                    "inputMethod": {
+                      "label": "Data structureDefine the JSON body with a data structure to map or enter values for each key. JSON reserved characters are escaped automatically."
+                    },
+                    "bodyDataStructure": {
+                      "label": "My data structure"
+                    },
+                    "dataStructureBodyContent": {
+                      "nested": {
+                        "contents": {
+                          "mode": "chose",
+                          "items": [
+                            {
+                              "parts": {
+                                "mode": "chose",
+                                "items": [
+                                  null
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "paginationType": {
+                      "label": "Empty"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "authenticationType",
+                    "type": "select",
+                    "label": "Authentication type",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "noAuth",
+                        "apiKey",
+                        "basicAuth",
+                        "oAuth"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "tlsType",
+                    "type": "select",
+                    "label": "Transport layer security (TLS)",
+                    "validate": {
+                      "enum": [
+                        "mTls",
+                        "tls"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "proxyKeychain",
+                    "type": "keychain:proxy",
+                    "label": "Proxy"
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "url",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "get",
+                        "head",
+                        "post",
+                        "put",
+                        "patch",
+                        "delete",
+                        "options"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "type": "array",
+                    "label": "Headers",
+                    "spec": {
+                      "name": "value",
+                      "label": "Header",
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "name",
+                          "label": "Name",
+                          "type": "text",
+                          "required": true,
+                          "validate": {
+                            "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                          }
+                        },
+                        {
+                          "name": "value",
+                          "label": "Value",
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "queryParameters",
+                    "type": "array",
+                    "label": "Query parameters",
+                    "spec": {
+                      "name": "value",
+                      "label": "Parameter",
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "name",
+                          "label": "Name",
+                          "type": "text",
+                          "required": true
+                        },
+                        {
+                          "name": "value",
+                          "label": "Value",
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "contentType",
+                    "type": "select",
+                    "label": "Body content type",
+                    "validate": {
+                      "enum": [
+                        "json",
+                        "multipart",
+                        "urlEncoded",
+                        "custom"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "parseResponse",
+                    "type": "boolean",
+                    "label": "Parse response",
+                    "required": true
+                  },
+                  {
+                    "name": "stopOnHttpError",
+                    "type": "boolean",
+                    "label": "Return error if HTTP request fails",
+                    "required": true
+                  },
+                  {
+                    "name": "timeout",
+                    "type": "uinteger",
+                    "label": "Timeout",
+                    "validate": {
+                      "min": 1,
+                      "max": 300
+                    }
+                  },
+                  {
+                    "name": "allowRedirects",
+                    "type": "boolean",
+                    "label": "Allow redirects",
+                    "required": true
+                  },
+                  {
+                    "name": "shareCookies",
+                    "type": "boolean",
+                    "label": "Share cookies with other HTTP modules",
+                    "required": true
+                  },
+                  {
+                    "name": "requestCompressedContent",
+                    "type": "boolean",
+                    "label": "Request compressed content",
+                    "required": true
+                  },
+                  {
+                    "name": "inputMethod",
+                    "type": "select",
+                    "label": "Body input method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "dataStructure",
+                        "jsonString"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "bodyDataStructure",
+                    "type": "udt",
+                    "label": "Body structure",
+                    "required": true
+                  },
+                  {
+                    "name": "dataStructureBodyContent",
+                    "type": "collection",
+                    "label": "Body content",
+                    "spec": [
+                      {
+                        "name": "systemInstruction",
+                        "type": "collection",
+                        "label": null,
+                        "spec": [
+                          {
+                            "name": "parts",
+                            "type": "collection",
+                            "label": null,
+                            "spec": [
+                              {
+                                "name": "text",
+                                "type": "text",
+                                "label": null
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "contents",
+                        "type": "array",
+                        "label": null,
+                        "spec": {
+                          "type": "collection",
+                          "spec": [
+                            {
+                              "name": "role",
+                              "label": null,
+                              "type": "text"
+                            },
+                            {
+                              "name": "parts",
+                              "label": null,
+                              "type": "array",
+                              "spec": {
+                                "type": "collection",
+                                "spec": [
+                                  {
+                                    "name": "text",
+                                    "label": null,
+                                    "type": "text"
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "name": "value"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "paginationType",
+                    "type": "select",
+                    "label": "Pagination type",
+                    "validate": {
+                      "enum": [
+                        "offsetBased",
+                        "pageBased",
+                        "urlBased",
+                        "tokenBased"
+                      ]
+                    }
+                  }
+                ],
+                "interface": [
+                  {
+                    "name": "data",
+                    "label": "Data",
+                    "type": "any"
+                  },
+                  {
+                    "name": "statusCode",
+                    "label": "Status Code",
+                    "type": "number"
+                  },
+                  {
+                    "name": "headers",
+                    "label": "Headers",
+                    "type": "collection",
+                    "spec": [
+                      {
+                        "name": "content-length",
+                        "label": "Content-Length",
+                        "type": "text"
+                      },
+                      {
+                        "name": "content-encoding",
+                        "label": "Content-Encoding",
+                        "type": "text"
+                      },
+                      {
+                        "name": "content-type",
+                        "label": "Content-Type",
+                        "type": "text"
+                      },
+                      {
+                        "name": "server",
+                        "label": "Server",
+                        "type": "text"
+                      },
+                      {
+                        "name": "cache-control",
+                        "label": "Cache-Control",
+                        "type": "text"
+                      },
+                      {
+                        "name": "set-cookie",
+                        "label": "Set-Cookie",
+                        "type": "array",
+                        "spec": {
+                          "type": "text"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "advanced": true
+              }
+            },
+            {
+              "id": 21,
+              "module": "builtin:BasicRouter",
+              "version": 1,
+              "mapper": null,
+              "metadata": {
+                "designer": {
+                  "x": 3300,
+                  "y": -150
+                }
+              },
+              "routes": [
+                {
+                  "flow": [
+                    {
+                      "id": 22,
+                      "module": "builtin:BasicFeeder",
+                      "version": 1,
+                      "parameters": {},
+                      "mapper": {
+                        "array": "{{17.array}}"
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3600,
+                          "y": -450
+                        },
+                        "restore": {
+                          "expect": {
+                            "array": {
+                              "mode": "edit"
+                            }
+                          }
+                        },
+                        "expect": [
+                          {
+                            "mode": "edit",
+                            "name": "array",
+                            "spec": [],
+                            "type": "array",
+                            "label": "Array"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": 24,
+                      "module": "google-sheets:addRow",
+                      "version": 2,
+                      "parameters": {
+                        "__IMTCONN__": 10950609
+                      },
+                      "mapper": {
+                        "from": "drive",
+                        "mode": "select",
+                        "values": {
+                          "0": "{{22.title}}",
+                          "1": "{{22.url}}",
+                          "2": "{{22.topic_match}}",
+                          "3": "{{22.usefulness}}",
+                          "4": "{{22.decision}}",
+                          "5": "{{22.reason}}"
+                        },
+                        "sheetId": "Sources",
+                        "spreadsheetId": "/1JEGlxm7nRG6DY1xWfbWupl9nvw7v_qw8rgqjOm3e5VQ",
+                        "includesHeaders": true,
+                        "insertDataOption": "INSERT_ROWS",
+                        "useColumnHeaders": false,
+                        "valueInputOption": "USER_ENTERED",
+                        "insertUnformatted": false
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3900,
+                          "y": -300
+                        },
+                        "restore": {
+                          "expect": {
+                            "from": {
+                              "label": "My Drive"
+                            },
+                            "mode": {
+                              "label": "Search by path"
+                            },
+                            "sheetId": {
+                              "label": "Sources"
+                            },
+                            "spreadsheetId": {
+                              "path": [
+                                "AI Research Assistant Log"
+                              ]
+                            },
+                            "includesHeaders": {
+                              "label": "Yes"
+                            },
+                            "insertDataOption": {
+                              "mode": "chose",
+                              "label": "Insert rows"
+                            },
+                            "useColumnHeaders": {
+                              "label": "No"
+                            },
+                            "valueInputOption": {
+                              "mode": "chose",
+                              "label": "User entered"
+                            },
+                            "insertUnformatted": {
+                              "mode": "chose"
+                            }
+                          },
+                          "parameters": {
+                            "__IMTCONN__": {
+                              "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                              },
+                              "label": "rin_rin's Google connection"
+                            }
+                          }
+                        },
+                        "parameters": [
+                          {
+                            "name": "__IMTCONN__",
+                            "type": "account:google",
+                            "label": "Connection",
+                            "required": true
+                          }
+                        ],
+                        "expect": [
+                          {
+                            "name": "mode",
+                            "type": "select",
+                            "label": "Search Method",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "insertUnformatted",
+                            "type": "boolean",
+                            "label": "Unformatted",
+                            "required": true
+                          },
+                          {
+                            "name": "valueInputOption",
+                            "type": "select",
+                            "label": "Value input option",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "insertDataOption",
+                            "type": "select",
+                            "label": "Insert data option",
+                            "validate": {
+                              "enum": [
+                                "INSERT_ROWS",
+                                "OVERWRITE"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "from",
+                            "type": "select",
+                            "label": "Drive",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "spreadsheetId",
+                            "type": "file",
+                            "label": "Spreadsheet Name",
+                            "required": true
+                          },
+                          {
+                            "name": "sheetId",
+                            "type": "select",
+                            "label": "Sheet Name",
+                            "required": true
+                          },
+                          {
+                            "name": "includesHeaders",
+                            "type": "select",
+                            "label": "Table contains headers",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                true,
+                                false
+                              ]
+                            }
+                          },
+                          {
+                            "name": "useColumnHeaders",
+                            "type": "select",
+                            "label": "Use column headers as IDs of the columns",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                true,
+                                false
+                              ]
+                            }
+                          },
+                          {
+                            "name": "values",
+                            "spec": [
+                              {
+                                "name": "0",
+                                "type": "text",
+                                "label": "Title (A)"
+                              },
+                              {
+                                "name": "1",
+                                "type": "text",
+                                "label": "URL (B)"
+                              },
+                              {
+                                "name": "2",
+                                "type": "text",
+                                "label": "TopicMatch (C)"
+                              },
+                              {
+                                "name": "3",
+                                "type": "text",
+                                "label": "Usefulness (D)"
+                              },
+                              {
+                                "name": "4",
+                                "type": "text",
+                                "label": "Decision (E)"
+                              },
+                              {
+                                "name": "5",
+                                "type": "text",
+                                "label": "Reason (F)"
+                              },
+                              {
+                                "name": "6",
+                                "type": "text",
+                                "label": "(G)"
+                              },
+                              {
+                                "name": "7",
+                                "type": "text",
+                                "label": "(H)"
+                              },
+                              {
+                                "name": "8",
+                                "type": "text",
+                                "label": "(I)"
+                              },
+                              {
+                                "name": "9",
+                                "type": "text",
+                                "label": "(J)"
+                              },
+                              {
+                                "name": "10",
+                                "type": "text",
+                                "label": "(K)"
+                              },
+                              {
+                                "name": "11",
+                                "type": "text",
+                                "label": "(L)"
+                              },
+                              {
+                                "name": "12",
+                                "type": "text",
+                                "label": "(M)"
+                              },
+                              {
+                                "name": "13",
+                                "type": "text",
+                                "label": "(N)"
+                              },
+                              {
+                                "name": "14",
+                                "type": "text",
+                                "label": "(O)"
+                              },
+                              {
+                                "name": "15",
+                                "type": "text",
+                                "label": "(P)"
+                              },
+                              {
+                                "name": "16",
+                                "type": "text",
+                                "label": "(Q)"
+                              },
+                              {
+                                "name": "17",
+                                "type": "text",
+                                "label": "(R)"
+                              },
+                              {
+                                "name": "18",
+                                "type": "text",
+                                "label": "(S)"
+                              },
+                              {
+                                "name": "19",
+                                "type": "text",
+                                "label": "(T)"
+                              },
+                              {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                              },
+                              {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                              },
+                              {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                              },
+                              {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                              },
+                              {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                              },
+                              {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                              }
+                            ],
+                            "type": "collection",
+                            "label": "Values in columns",
+                            "metadata": [
+                              [
+                                [
+                                  "Title",
+                                  "URL",
+                                  "TopicMatch",
+                                  "Usefulness",
+                                  "Decision",
+                                  "Reason"
+                                ]
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": 30,
+                      "module": "util:TextAggregator",
+                      "version": 1,
+                      "parameters": {
+                        "rowSeparator": "\n",
+                        "feeder": 22
+                      },
+                      "mapper": {
+                        "value": "<b>{{22.title}}</b> - {{22.reason}}\n{{22.url}}\n"
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 4200,
+                          "y": -300
+                        },
+                        "setupValidation": {
+                          "version": 1,
+                          "configuration": "1cb2452ddd44f6fd",
+                          "result": {
+                            "valid": true,
+                            "fields": []
+                          }
+                        },
+                        "restore": {
+                          "parameters": {
+                            "rowSeparator": {
+                              "label": "New row"
+                            }
+                          },
+                          "extra": {
+                            "feeder": {
+                              "label": "Iterator [22]"
+                            }
+                          }
+                        },
+                        "parameters": [
+                          {
+                            "name": "rowSeparator",
+                            "type": "select",
+                            "label": "Row separator",
+                            "validate": {
+                              "enum": [
+                                "\n",
+                                "\t",
+                                "other"
+                              ]
+                            }
+                          }
+                        ],
+                        "expect": [
+                          {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Text"
+                          }
+                        ],
+                        "advanced": true
+                      }
+                    },
+                    {
+                      "id": 31,
+                      "module": "google-drive:uploadAFile",
+                      "version": 4,
+                      "parameters": {
+                        "__IMTCONN__": 10950733
+                      },
+                      "mapper": {
+                        "data": "{{19.data.candidates[].content.parts[].text}}{{30.text}}",
+                        "select": "value",
+                        "convert": false,
+                        "filename": "research_notes.md",
+                        "folderId": "/1m-TALeAfBTq64CyZi5UyXaZ0AlDYSAlv",
+                        "destination": "drive"
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 4500,
+                          "y": -300
+                        },
+                        "setupValidation": {
+                          "result": {
+                            "valid": true,
+                            "fields": []
+                          },
+                          "version": 1,
+                          "configuration": "e402df26b86134d8"
+                        },
+                        "restore": {
+                          "expect": {
+                            "select": {
+                              "label": "Select from the list"
+                            },
+                            "folderId": {
+                              "mode": "chose",
+                              "path": [
+                                "Ai research assistant "
+                              ]
+                            },
+                            "destination": {
+                              "label": "My Drive"
+                            }
+                          },
+                          "parameters": {
+                            "__IMTCONN__": {
+                              "data": {
+                                "scoped": "true",
+                                "connection": "google-drive"
+                              },
+                              "label": "rin_rin's Google Drive connection"
+                            }
+                          }
+                        },
+                        "parameters": [
+                          {
+                            "name": "__IMTCONN__",
+                            "type": "account:google-restricted,google-drive",
+                            "label": "Connection",
+                            "required": true
+                          }
+                        ],
+                        "expect": [
+                          {
+                            "name": "select",
+                            "type": "select",
+                            "label": "Enter a Folder ID",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                "map",
+                                "value"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "New File Name"
+                          },
+                          {
+                            "name": "filename",
+                            "type": "text",
+                            "label": "File Name",
+                            "required": true
+                          },
+                          {
+                            "name": "data",
+                            "type": "buffer",
+                            "label": "Data",
+                            "required": true
+                          },
+                          {
+                            "name": "convert",
+                            "type": "boolean",
+                            "label": "Convert a File",
+                            "required": true
+                          },
+                          {
+                            "name": "destination",
+                            "type": "select",
+                            "label": "New Drive Location",
+                            "required": true,
+                            "validate": {
+                              "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "folderId",
+                            "type": "folder",
+                            "label": "New Folder Location",
+                            "required": true
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": 32,
+                      "module": "telegram:SendReplyMessage",
+                      "version": 1,
+                      "parameters": {
+                        "__IMTCONN__": 10733831
+                      },
+                      "mapper": {
+                        "chatId": "{{2.chatId}}",
+                        "text": "Research complete for:\n{{2.researchTopic}}\n\n\n{{19.data.candidates[].content.parts[].text}}\n\n<b>Sources</b>\n{{30.text}}",
+                        "messageThreadId": "",
+                        "parseMode": "HTML",
+                        "disableWebPagePreview": true,
+                        "replyToMessageId": "",
+                        "replyMarkupAssembleType": "reply_markup_enter",
+                        "replyMarkup": ""
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 4800,
+                          "y": -300
+                        },
+                        "setupValidation": {
+                          "version": 1,
+                          "configuration": "696c30e3d4f58faa",
+                          "result": {
+                            "valid": true,
+                            "fields": []
+                          }
+                        },
+                        "restore": {
+                          "parameters": {
+                            "__IMTCONN__": {
+                              "label": "rin_rin's Telegram Bot connection",
+                              "data": {
+                                "scoped": "true",
+                                "connection": "telegram"
+                              }
+                            }
+                          },
+                          "expect": {
+                            "parseMode": {
+                              "label": "HTML"
+                            },
+                            "disableNotification": {
+                              "mode": "chose"
+                            },
+                            "replyMarkupAssembleType": {
+                              "label": "Enter the Reply Markup"
+                            }
+                          }
+                        },
+                        "parameters": [
+                          {
+                            "name": "__IMTCONN__",
+                            "type": "account:telegram",
+                            "label": "Connection",
+                            "required": true
+                          }
+                        ],
+                        "expect": [
+                          {
+                            "name": "chatId",
+                            "type": "text",
+                            "label": "Chat ID",
+                            "required": true
+                          },
+                          {
+                            "name": "text",
+                            "type": "text",
+                            "label": "Text",
+                            "required": true
+                          },
+                          {
+                            "name": "messageThreadId",
+                            "type": "number",
+                            "label": "Message Thread ID"
+                          },
+                          {
+                            "name": "parseMode",
+                            "type": "select",
+                            "label": "Parse Mode",
+                            "validate": {
+                              "enum": [
+                                "Markdown",
+                                "HTML"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "disableNotification",
+                            "type": "boolean",
+                            "label": "Disable Notifications"
+                          },
+                          {
+                            "name": "disableWebPagePreview",
+                            "type": "boolean",
+                            "label": "Disable Link Previews"
+                          },
+                          {
+                            "name": "replyToMessageId",
+                            "type": "number",
+                            "label": "Original Message ID"
+                          },
+                          {
+                            "name": "replyMarkupAssembleType",
+                            "type": "select",
+                            "label": "Enter/Assemble the Reply Markup Field",
+                            "validate": {
+                              "enum": [
+                                "reply_markup_enter",
+                                "reply_markup_assemble"
+                              ]
+                            }
+                          },
+                          {
+                            "name": "replyMarkup",
+                            "type": "text",
+                            "label": "Reply Markup"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 20,
+              "module": "http:MakeRequest",
+              "version": 4,
+              "parameters": {
+                "authenticationType": "noAuth",
+                "tlsType": ""
+              },
+              "filter": {
+                "name": "Not enough sources",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(17.array)}}",
+                      "b": "3",
+                      "o": "number:less"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "x-goog-api-key",
+                    "value": "YOUR_GEMINI_API_KEY"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "contentType": "json",
+                "parseResponse": true,
+                "stopOnHttpError": true,
+                "timeout": "120",
+                "allowRedirects": true,
+                "shareCookies": false,
+                "requestCompressedContent": true,
+                "inputMethod": "dataStructure",
+                "bodyDataStructure": 584522,
+                "dataStructureBodyContent": {
+                  "systemInstruction": {
+                    "parts": {
+                      "text": "You are a research assistant. The search for the user's topic did not return enough high-quality sources. Suggest 3 narrower or alternative research topics the user could try instead, each on its own line and numbered 1 to 3. Use plain text only, no markdown symbols and no HTML tags. Keep the whole answer under 600 characters."
+                    }
+                  },
+                  "contents": [
+                    {
+                      "role": "user",
+                      "parts": [
+                        {
+                          "text": "Topic: {{2.researchTopic}}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3000,
+                  "y": 150
+                },
+                "setupValidation": {
+                  "version": 1,
+                  "configuration": "981a833544d93562",
+                  "result": {
+                    "valid": true,
+                    "fields": []
+                  }
+                },
+                "restore": {
+                  "parameters": {
+                    "authenticationType": {
+                      "label": "No authenticationUse when no credentials are required for the request."
+                    },
+                    "tlsType": {
+                      "label": "Empty"
+                    }
+                  },
+                  "expect": {
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    },
+                    "queryParameters": {
+                      "mode": "chose"
+                    },
+                    "contentType": {
+                      "label": "application/jsonEnter data in the JSON format, as a string or using a data structure."
+                    },
+                    "parseResponse": {
+                      "mode": "chose"
+                    },
+                    "stopOnHttpError": {
+                      "mode": "chose"
+                    },
+                    "allowRedirects": {
+                      "mode": "chose"
+                    },
+                    "shareCookies": {
+                      "mode": "chose"
+                    },
+                    "requestCompressedContent": {
+                      "mode": "chose"
+                    },
+                    "inputMethod": {
+                      "label": "Data structureDefine the JSON body with a data structure to map or enter values for each key. JSON reserved characters are escaped automatically."
+                    },
+                    "bodyDataStructure": {
+                      "label": "My data structure"
+                    },
+                    "dataStructureBodyContent": {
+                      "nested": {
+                        "contents": {
+                          "mode": "chose",
+                          "items": [
+                            {
+                              "parts": {
+                                "mode": "chose",
+                                "items": [
+                                  null
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "paginationType": {
+                      "label": "Empty"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "authenticationType",
+                    "type": "select",
+                    "label": "Authentication type",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "noAuth",
+                        "apiKey",
+                        "basicAuth",
+                        "oAuth"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "tlsType",
+                    "type": "select",
+                    "label": "Transport layer security (TLS)",
+                    "validate": {
+                      "enum": [
+                        "mTls",
+                        "tls"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "proxyKeychain",
+                    "type": "keychain:proxy",
+                    "label": "Proxy"
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "url",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "get",
+                        "head",
+                        "post",
+                        "put",
+                        "patch",
+                        "delete",
+                        "options"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "type": "array",
+                    "label": "Headers",
+                    "spec": {
+                      "name": "value",
+                      "label": "Header",
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "name",
+                          "label": "Name",
+                          "type": "text",
+                          "required": true,
+                          "validate": {
+                            "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                          }
+                        },
+                        {
+                          "name": "value",
+                          "label": "Value",
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "queryParameters",
+                    "type": "array",
+                    "label": "Query parameters",
+                    "spec": {
+                      "name": "value",
+                      "label": "Parameter",
+                      "type": "collection",
+                      "spec": [
+                        {
+                          "name": "name",
+                          "label": "Name",
+                          "type": "text",
+                          "required": true
+                        },
+                        {
+                          "name": "value",
+                          "label": "Value",
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "contentType",
+                    "type": "select",
+                    "label": "Body content type",
+                    "validate": {
+                      "enum": [
+                        "json",
+                        "multipart",
+                        "urlEncoded",
+                        "custom"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "parseResponse",
+                    "type": "boolean",
+                    "label": "Parse response",
+                    "required": true
+                  },
+                  {
+                    "name": "stopOnHttpError",
+                    "type": "boolean",
+                    "label": "Return error if HTTP request fails",
+                    "required": true
+                  },
+                  {
+                    "name": "timeout",
+                    "type": "uinteger",
+                    "label": "Timeout",
+                    "validate": {
+                      "min": 1,
+                      "max": 300
+                    }
+                  },
+                  {
+                    "name": "allowRedirects",
+                    "type": "boolean",
+                    "label": "Allow redirects",
+                    "required": true
+                  },
+                  {
+                    "name": "shareCookies",
+                    "type": "boolean",
+                    "label": "Share cookies with other HTTP modules",
+                    "required": true
+                  },
+                  {
+                    "name": "requestCompressedContent",
+                    "type": "boolean",
+                    "label": "Request compressed content",
+                    "required": true
+                  },
+                  {
+                    "name": "inputMethod",
+                    "type": "select",
+                    "label": "Body input method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "dataStructure",
+                        "jsonString"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "bodyDataStructure",
+                    "type": "udt",
+                    "label": "Body structure",
+                    "required": true
+                  },
+                  {
+                    "name": "dataStructureBodyContent",
+                    "type": "collection",
+                    "label": "Body content",
+                    "spec": [
+                      {
+                        "name": "systemInstruction",
+                        "type": "collection",
+                        "label": null,
+                        "spec": [
+                          {
+                            "name": "parts",
+                            "type": "collection",
+                            "label": null,
+                            "spec": [
+                              {
+                                "name": "text",
+                                "type": "text",
+                                "label": null
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "contents",
+                        "type": "array",
+                        "label": null,
+                        "spec": {
+                          "type": "collection",
+                          "spec": [
+                            {
+                              "name": "role",
+                              "label": null,
+                              "type": "text"
+                            },
+                            {
+                              "name": "parts",
+                              "label": null,
+                              "type": "array",
+                              "spec": {
+                                "type": "collection",
+                                "spec": [
+                                  {
+                                    "name": "text",
+                                    "label": null,
+                                    "type": "text"
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "name": "value"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "paginationType",
+                    "type": "select",
+                    "label": "Pagination type",
+                    "validate": {
+                      "enum": [
+                        "offsetBased",
+                        "pageBased",
+                        "urlBased",
+                        "tokenBased"
+                      ]
+                    }
+                  }
+                ],
+                "interface": [
+                  {
+                    "name": "data",
+                    "label": "Data",
+                    "type": "any"
+                  },
+                  {
+                    "name": "statusCode",
+                    "label": "Status Code",
+                    "type": "number"
+                  },
+                  {
+                    "name": "headers",
+                    "label": "Headers",
+                    "type": "collection",
+                    "spec": [
+                      {
+                        "name": "content-length",
+                        "label": "Content-Length",
+                        "type": "text"
+                      },
+                      {
+                        "name": "content-encoding",
+                        "label": "Content-Encoding",
+                        "type": "text"
+                      },
+                      {
+                        "name": "content-type",
+                        "label": "Content-Type",
+                        "type": "text"
+                      },
+                      {
+                        "name": "server",
+                        "label": "Server",
+                        "type": "text"
+                      },
+                      {
+                        "name": "cache-control",
+                        "label": "Cache-Control",
+                        "type": "text"
+                      },
+                      {
+                        "name": "set-cookie",
+                        "label": "Set-Cookie",
+                        "type": "array",
+                        "spec": {
+                          "type": "text"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "advanced": true
+              }
+            },
+            {
+              "id": 33,
+              "module": "telegram:SendReplyMessage",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": 10733831
+              },
+              "mapper": {
+                "chatId": "{{2.chatId}}",
+                "text": "I couldn't find enough high-quality sources for: {{2.researchTopic}}\n\nTry one of these narrower topics:\n{{20.data.candidates[].content.parts[].text}}\nSend me one of these, or add more detail to your topic.\n",
+                "messageThreadId": "",
+                "parseMode": "",
+                "replyToMessageId": "",
+                "replyMarkupAssembleType": "reply_markup_enter",
+                "replyMarkup": ""
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3300,
+                  "y": 150
+                },
+                "setupValidation": {
+                  "version": 1,
+                  "configuration": "6bc47deb8ff8855d",
+                  "result": {
+                    "valid": true,
+                    "fields": []
+                  }
+                },
+                "restore": {
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "label": "rin_rin's Telegram Bot connection",
+                      "data": {
+                        "scoped": "true",
+                        "connection": "telegram"
+                      }
+                    }
+                  },
+                  "expect": {
+                    "parseMode": {
+                      "label": "Empty"
+                    },
+                    "disableNotification": {
+                      "mode": "chose"
+                    },
+                    "replyMarkupAssembleType": {
+                      "label": "Enter the Reply Markup"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:telegram",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "chatId",
+                    "type": "text",
+                    "label": "Chat ID",
+                    "required": true
+                  },
+                  {
+                    "name": "text",
+                    "type": "text",
+                    "label": "Text",
+                    "required": true
+                  },
+                  {
+                    "name": "messageThreadId",
+                    "type": "number",
+                    "label": "Message Thread ID"
+                  },
+                  {
+                    "name": "parseMode",
+                    "type": "select",
+                    "label": "Parse Mode",
+                    "validate": {
+                      "enum": [
+                        "Markdown",
+                        "HTML"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "disableNotification",
+                    "type": "boolean",
+                    "label": "Disable Notifications"
+                  },
+                  {
+                    "name": "disableWebPagePreview",
+                    "type": "boolean",
+                    "label": "Disable Link Previews"
+                  },
+                  {
+                    "name": "replyToMessageId",
+                    "type": "number",
+                    "label": "Original Message ID"
+                  },
+                  {
+                    "name": "replyMarkupAssembleType",
+                    "type": "select",
+                    "label": "Enter/Assemble the Reply Markup Field",
+                    "validate": {
+                      "enum": [
+                        "reply_markup_enter",
+                        "reply_markup_assemble"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "replyMarkup",
+                    "type": "text",
+                    "label": "Reply Markup"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu1.make.com",
+    "notes": []
+  }
+}
